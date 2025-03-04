@@ -35,17 +35,24 @@ enum Command {
 
 #[derive(Debug, Args)]
 struct ProducerArgs {
+    /// Optional message partition.
+    ///
+    /// If not given, Kafka will assign one.
     #[arg(long)]
     partition: Option<i32>,
 
+    /// Optional message payload.
     #[arg(long)]
     payload: Option<String>,
 
+    /// Optional message key.
     #[arg(long)]
     key: Option<String>,
 
     /// If `=` character is present in the value, it is treated as a separator between the header name and its value.
     /// If it's not present, the whole value is treated as a header name.
+    ///
+    /// Can be provided multiple times.
     #[arg(long)]
     header: Vec<MessageHeaderArg>,
 }

@@ -39,4 +39,4 @@ This consumer will get only messages with header `x-user=2`.
 ```sh
 mirrord exec -f .mirrord/producer.json -- ./target/debug/kafka-demo --kafka-topic-name test --kafka-bootstrap-servers kafka-demo.default.svc.cluster.local:9092  producer --key hello --header "x-user=1"
 ```
-The producer app accepts more args, use `./target/debug/kafka-demo --kafka-topic-name test --kafka-bootstrap-servers kafka-demo.default.svc.cluster.local:9092  producer --help` for info.
+The producer app accepts more args, use `./target/debug/kafka-demo producer --help` for info.
