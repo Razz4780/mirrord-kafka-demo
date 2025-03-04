@@ -31,9 +31,12 @@ spec:
 apiVersion: queues.mirrord.metalbear.co/v1alpha
 kind: MirrordKafkaClientConfig
 metadata:
+  # Referenced in the `MirrordKafkaTopicsConsumer` below.
   name: demo-config
+  # These resources must live in the operator namespace.
   namespace: mirrord
 spec:
+  # Very minimalistic configuration, only the required Kafka endpoint.
   properties:
   - name: bootstrap.servers
     value: kafka-demo.default.svc.cluster.local:9092
@@ -42,18 +45,30 @@ spec:
 apiVersion: queues.mirrord.metalbear.co/v1alpha
 kind: MirrordKafkaTopicsConsumer
 metadata:
+  # Doesn't matter, this can be whatever.
   name: demo-consumer
 spec:
+  # Corresponds to `apiVersion` of `kafka-demo-consumer-deployment`.
   consumerApiVersion: apps/v1
+  # Corresponds to `kind` of `kafka-demo-consumer-deployment`.
   consumerKind: Deployment
+  # Corresponds to `metadata.name` of `kafka-demo-consumer-deployment`.
   consumerName: kafka-demo-consumer-deployment
+  # List of Kafka topics the users can split on this target.
   topics:
+    # This id is not related to the topic in any way.
+    # It is only here to allow users for referencing this
+    # topic in their mirrord configs.
   - id: topic-for-demo
+    # Name of the `MirrordKafkaClientConfig` to use when managing topics in the Kafka cluster.
+    # This config be used by the mirrord Operator when building its Kafka client.
     clientConfig: demo-config
+    # Where to find Kafka consumer group id in the consumer workload pod template.
     groupIdSources:
     - directEnvVar:
         container: kafka-demo-consumer
         variable: KAFKA_GROUP_ID
+    # Where to find Kafka topic name in the consumer workload pod template.
     nameSources:
     - directEnvVar:
         container: kafka-demo-consumer
