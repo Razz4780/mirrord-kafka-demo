@@ -2,7 +2,7 @@
 
 1. Spin up the Kafka cluster:
 ```sh
-helm install --atomic -f kafka_values.yaml kafka-demo oci://registry-1.docker.io/bitnamicharts/kafka
+helm install --atomic -f kafka_values.yaml --wait kafka-demo oci://registry-1.docker.io/bitnamicharts/kafka
 ```
 
 2. Install the mirrord Operator from the [helm chart](https://github.com/metalbear-co/charts).
