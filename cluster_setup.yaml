@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-demo-consumer-deployment
+  labels:
+    app: kafka-demo-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-demo-consumer
+  template:
+    metadata:
+      labels:
+        app: kafka-demo-consumer
+    spec:
+      containers:
+      - name: kafka-demo-consumer
+        image: kafka-demo-app
+        imagePullPolicy: IfNotPresent
+        command: ["./kafka-demo", "consumer"]
+        env:
+          - name: KAFKA_TOPIC_NAME
+            value: test
+          - name: KAFKA_BOOTSTRAP_SERVERS
+            value: kafka-demo.default.svc.cluster.local:9092
+          - name: KAFKA_GROUP_ID
+            value: demo
+
+---
+apiVersion: queues.mirrord.metalbear.co/v1alpha
+kind: MirrordKafkaClientConfig
+metadata:
+  name: demo-config
+  namespace: mirrord
+spec:
+  properties:
+  - name: bootstrap.servers
+    value: kafka-demo.default.svc.cluster.local:9092
+
+---
+apiVersion: queues.mirrord.metalbear.co/v1alpha
+kind: MirrordKafkaTopicsConsumer
+metadata:
+  name: demo-consumer
+spec:
+  consumerApiVersion: apps/v1
+  consumerKind: Deployment
+  consumerName: kafka-demo-consumer-deployment
+  topics:
+  - id: topic-for-demo
+    clientConfig: demo-config
+    groupIdSources:
+    - directEnvVar:
+        container: kafka-demo-consumer
+        variable: KAFKA_GROUP_ID
+    nameSources:
+    - directEnvVar:
+        container: kafka-demo-consumer
+        variable: KAFKA_TOPIC_NAME

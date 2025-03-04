@@ -1,0 +1,22 @@
+{
+    "operator": true,
+    "target": "deployment/kafka-demo-consumer-deployment",
+    "feature": {
+        "network": {
+            "outgoing": true,
+            "incoming": false,
+            "dns": true
+        },
+        "env": true,
+        "fs": "local",
+        "hostname": false,
+        "split_queues": {
+            "topic-for-demo": {
+                "queue_type": "Kafka",
+                "message_filter": {
+                    "x-user": "^1$"
+                }
+            }
+        }
+    }
+}
